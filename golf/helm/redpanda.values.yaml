@@ -153,6 +153,6 @@ tuning:
   tune_aio_events: true
   tune_clocksource: true
   tune_ballast_file: true
-  ballast_file_path: /var/lib/redpanda/data/kafka/ballast
+  ballast_file_path: /var/lib/redpanda/data/ballast
   ballast_file_size: 10GiB
   well_known_io: gcp:n2-highmem-64:ssd
