@@ -49,7 +49,7 @@ storage:
     enabled: true
     storageClass: ssd-xfs
 logging:
-  logLevel: info
+  logLevel: error
   usageStats:
     enabled: false
     organization: ec.ai
