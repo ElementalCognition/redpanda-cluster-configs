@@ -1,0 +1,38 @@
+image:
+  tag: v2.2.2
+ingress:
+  enabled: true
+  className: "nginx-int"
+  annotations:
+    cert-manager.io/cluster-issuer: dns-issuer
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: "console.redpanda-golf.cora.dev.corp.ec.ai"
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: console-redpanda-golf-cora-tls
+      hosts:
+        - "console.redpanda-golf.cora.dev.corp.ec.ai"
+console:
+  config:
+    kafka:
+      brokers:
+        - bootstrap.redpanda-golf.cora.dev.corp.ec.ai:9094
+      schemaRegistry:
+        enabled: false
+        urls:
+          - https://redpanda-golf-0.dev.corp.ec.ai:8081
+    logger:
+      level: error
+    connect:
+      enabled: false
+extraEnv:
+  - name: LICENSE
+    valueFrom:
+      secretKeyRef:
+        name: redpanda-license
+        key: license

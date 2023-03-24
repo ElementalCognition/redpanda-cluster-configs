@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bootstrap-golf
+  annotations:
+    networking.gke.io/load-balancer-type: Internal
+    external-dns.alpha.kubernetes.io/hostname: bootstrap.redpanda-golf.cora.dev.corp.ec.ai
+spec:
+  selector:
+    app.kubernetes.io/instance: redpanda-golf
+    app.kubernetes.io/name: redpanda
+  type: LoadBalancer
+  ports:
+    - name: kafka
+      targetPort: 9094
+      port: 9094

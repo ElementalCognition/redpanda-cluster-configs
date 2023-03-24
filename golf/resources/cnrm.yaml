@@ -1,0 +1,55 @@
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMServiceAccount
+metadata:
+  name: cora-redpanda-golf
+spec:
+  displayName: cora redpanda golf SA
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: cora-redpanda-golf-wlid
+spec:
+  member: serviceAccount:elementalcognition-app-dev.svc.id.goog[cora-service/cora-redpanda-golf]
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: cora-redpanda-golf
+---
+apiVersion: storage.cnrm.cloud.google.com/v1beta1
+kind: StorageBucket
+metadata:
+  name: ec-cora-redpanda-golf-tieredstorage
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: abandon
+    cnrm.cloud.google.com/force-destroy: "false"
+spec:
+  versioning:
+    enabled: false
+  uniformBucketLevelAccess: true
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: cora-redpanda-golf
+spec:
+  member: serviceAccount:cora-redpanda-golf@elementalcognition-app-dev.iam.gserviceaccount.com
+  role: roles/storage.objectAdmin
+  resourceRef:
+    apiVersion: storage.cnrm.cloud.google.com/v1beta1
+    kind: StorageBucket
+    name: ec-cora-redpanda-golf-tieredstorage
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: cora-redpanda-golf-alpha
+spec:
+  member: serviceAccount:cora-redpanda-golf@elementalcognition-app-dev.iam.gserviceaccount.com
+  role: roles/storage.objectAdmin
+  resourceRef:
+    apiVersion: storage.cnrm.cloud.google.com/v1beta1
+    kind: StorageBucket
+    name: ec-cora-rp-storage-data-dev

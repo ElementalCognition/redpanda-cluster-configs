@@ -1,0 +1,157 @@
+image:
+  tag: "v23.1.2"
+license_secret_ref:
+  secret_name: redpanda-license
+  secret_key: license
+tolerations:
+  - key: bigboy
+    operator: Exists
+commonLabels:
+  ec.ai/environment: dev
+  ec.ai/team: cora
+  ec.ai/component_group: cora-service
+  ec.ai/component: redpanda
+  ec.ai/sub_component: k8s-deployment
+  ec.ai/shared: "false"
+  ec.ai/technical_owner: rluckie
+  ec.ai/contract: ec
+  ec.ai/managed_by: gitops
+  ec.ai/data_classification: internal
+rackAwareness:
+  enabled: true
+console:
+  enabled: false
+tls:
+  enabled: false
+resources:
+  cpu:
+    cores: 24
+    overprovisioned: false
+  memory:
+    container:
+      max: "200Gi"
+      min: "200Gi"
+    redpanda:
+      memory: "180Gi"
+      reserveMemory: "10Gi"
+storage:
+  tieredConfig:
+    cloud_storage_api_endpoint: storage.googleapis.com
+    cloud_storage_bucket: ec-cora-redpanda-golf-tieredstorage
+    cloud_storage_cache_size: 1000000000000
+    cloud_storage_credentials_source: gcp_instance_metadata
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_region: us
+  persistentVolume:
+    enabled: false
+    size: 2000Gi
+    storageClass: "extreme-xfs"
+logging:
+  logLevel: error
+  # usageStats:
+  #   enabled: true
+    # organization: cora
+    # clusterId: golf
+statefulset:
+  replicas: 5
+  priorityClassName: shared-high-preempting
+  tolerations:
+    - key: bigboy
+      operator: Exists
+  startupProbe:
+    initialDelaySeconds: 1
+    failureThreshold: 120
+    periodSeconds: 10
+  livenessProbe:
+    initialDelaySeconds: 10
+    failureThreshold: 300
+    periodSeconds: 10
+  readinessProbe:
+    initialDelaySeconds: 1
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: cloud.google.com/gke-spot
+              operator: DoesNotExist
+            - key: cloud.google.com/gke-os-distribution
+              operator: In
+              values:
+                - ubuntu
+            - key: cloud.google.com/machine-family
+              operator: In
+              values:
+                - n2
+            - key: cloud.google.com/gke-ephemeral-storage-local-ssd
+              operator: In
+              values:
+                - "true"
+            - key: node.kubernetes.io/instance-type
+              operator: In
+              values:
+                - n2-highmem-64
+  initContainers:
+    tuning:
+      resources:
+        limits:
+          cpu: 1
+          memory: 1Gi
+        requests:
+          cpu: 1
+          memory: 1Gi
+    setTieredStorageCacheDirOwnership:
+      resources:
+        limits:
+          cpu: 1
+          memory: 1Gi
+        requests:
+          cpu: 1
+          memory: 1Gi
+    configurator:
+      resources:
+        limits:
+          cpu: 1
+          memory: 1Gi
+        requests:
+          cpu: 1
+          memory: 1Gi
+serviceAccount:
+  create: true
+  name: cora-redpanda-golf
+  annotations:
+    iam.gke.io/gcp-service-account: cora-redpanda-golf@elementalcognition-app-dev.iam.gserviceaccount.com
+rbac:
+  enabled: true
+listeners:
+  kafka:
+    port: 9092
+    external:
+      default:
+        enabled: true
+        port: 9094
+        advertisedPorts:
+          - 9094
+external:
+  domain: "dev.corp.ec.ai"
+  enabled: true
+  type: null
+config:
+  cluster:
+    log_compression_type: none
+  tunable:
+    log_segment_size: 128MiB
+    compacted_log_segment_size: 128MiB
+    max_compacted_log_segment_size: 512MiB
+    append_chunk_size: 64KiB
+tuning:
+  tune_aio_events: true
+  tune_clocksource: true
+  tune_ballast_file: true
+  ballast_file_path: "/var/lib/redpanda/data/ballast"
+  ballast_file_size: "32GiB"
+  well_known_io: "gcp:n2-highmem-64:nvme"

@@ -1,0 +1,140 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redpanda-golf-0
+  annotations:
+    networking.gke.io/load-balancer-type: Internal
+  labels:
+    monitored-by: victoriametrics
+    app: cora-redpanda
+spec:
+  type: LoadBalancer
+  ports:
+    - name: schemaregistry
+      targetPort: 8081
+      port: 8081
+    - name: http
+      targetPort: 8082
+      port: 8082
+    - name: kafka
+      targetPort: 9094
+      port: 9094
+    - name: admin
+      targetPort: 9644
+      port: 9644
+  selector:
+    statefulset.kubernetes.io/pod-name: redpanda-golf-0
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redpanda-golf-1
+  annotations:
+    networking.gke.io/load-balancer-type: Internal
+  labels:
+    monitored-by: victoriametrics
+    app: cora-redpanda
+spec:
+  type: LoadBalancer
+  ports:
+    - name: schemaregistry
+      targetPort: 8081
+      port: 8081
+    - name: http
+      targetPort: 8082
+      port: 8082
+    - name: kafka
+      targetPort: 9094
+      port: 9094
+    - name: admin
+      targetPort: 9644
+      port: 9644
+  selector:
+    statefulset.kubernetes.io/pod-name: redpanda-golf-1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redpanda-golf-2
+  annotations:
+    networking.gke.io/load-balancer-type: Internal
+  labels:
+    monitored-by: victoriametrics
+    app: cora-redpanda
+spec:
+  type: LoadBalancer
+  ports:
+    - name: schemaregistry
+      targetPort: 8081
+      port: 8081
+    - name: http
+      targetPort: 8082
+      port: 8082
+    - name: kafka
+      targetPort: 9094
+      port: 9094
+    - name: admin
+      targetPort: 9644
+      port: 9644
+  selector:
+    statefulset.kubernetes.io/pod-name: redpanda-golf-2
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redpanda-golf-3
+  annotations:
+    networking.gke.io/load-balancer-type: Internal
+  labels:
+    monitored-by: victoriametrics
+    app: cora-redpanda
+spec:
+  type: LoadBalancer
+  ports:
+    - name: schemaregistry
+      targetPort: 8081
+      port: 8081
+    - name: http
+      targetPort: 8082
+      port: 8082
+    - name: kafka
+      targetPort: 9094
+      port: 9094
+    - name: admin
+      targetPort: 9644
+      port: 9644
+  selector:
+    statefulset.kubernetes.io/pod-name: redpanda-golf-3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redpanda-golf-4
+  annotations:
+    networking.gke.io/load-balancer-type: Internal
+  labels:
+    monitored-by: victoriametrics
+    app: cora-redpanda
+spec:
+  type: LoadBalancer
+  ports:
+    - name: schemaregistry
+      targetPort: 8081
+      port: 8081
+    - name: http
+      targetPort: 8082
+      port: 8082
+    - name: kafka
+      targetPort: 9094
+      port: 9094
+    - name: admin
+      targetPort: 9644
+      port: 9644
+  selector:
+    statefulset.kubernetes.io/pod-name: redpanda-golf-4
+
