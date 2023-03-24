@@ -26,28 +26,27 @@ tls:
   enabled: false
 resources:
   cpu:
-    cores: 16
+    cores: 24
     overprovisioned: false
   memory:
     container:
-      max: 128Gi
-      min: 128Gi
-    # redpanda:
-    #   memory: 180Gi
-    #   reserveMemory: 10Gi
+      max: 192Gi
 storage:
+  persistentVolume:
+    enabled: true
+    size: 1500Gi
+    storageClass: ssd-xfs
   tieredConfig:
     cloud_storage_api_endpoint: storage.googleapis.com
     cloud_storage_bucket: ec-cora-redpanda-golf-tieredstorage
-    cloud_storage_cache_size: 40000000000
+    cloud_storage_cache_size: 53687091200
     cloud_storage_credentials_source: gcp_instance_metadata
     cloud_storage_enable_remote_read: true
     cloud_storage_enable_remote_write: true
     cloud_storage_enabled: true
     cloud_storage_region: us
-  persistentVolume:
+  tieredStoragePersistentVolume:
     enabled: true
-    size: 1500Gi
     storageClass: ssd-xfs
 logging:
   logLevel: info
@@ -143,12 +142,24 @@ external:
   type: null
 config:
   cluster:
+    log_cleanup_policy: compact,delete
     log_compression_type: none
+    partition_autobalancing_mode: continuous
+    retention_local_target_bytes_default: 805306368
+    retention_local_target_ms_default: 21600000
   tunable:
-    log_segment_size: 128MiB
-    compacted_log_segment_size: 128MiB
-    max_compacted_log_segment_size: 512MiB
-    append_chunk_size: 64KiB
+    log_segment_size: 128MiB # 128 Mi (helm: 128Mi, docs: 128 Mi)
+    log_segment_size_min: 16MiB #  16 Mi (helm: 16Mi,  docs: 1 Mi)
+    log_segment_size_max: 256MiB # 256 Mi (helm: 256Mi, docs: null)
+    compacted_log_segment_size: 128MiB # 128 Mi (helm: 512Mi, docs: 256 Mi)
+    max_compacted_log_segment_size: 512MiB # 512 Mi (helm: 512Mi, docs: 5 Gi)
+    append_chunk_size: 64KiB # 64 Ki  (helm: NA,    docs: 16 Ki)
+    kafka_batch_max_bytes: 1MiB # 1 mb
+    topic_partitions_per_shard: 1000 # 1000 (helm: 1000,    docs: 7000)
+    kafka_connection_rate_limit: 1000
+    group_topic_partitions: 16
+    delete_retention_ms: -1ms
+    retention_bytes: -1  # <--- NOT WORKING 
 tuning:
   tune_aio_events: true
   tune_clocksource: true
